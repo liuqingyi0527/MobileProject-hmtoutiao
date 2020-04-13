@@ -4,3 +4,19 @@
 .van-nav-bar .van-nav-bar__title {
   color: #fff;
 }
+/*首页*/
+.index {
+  padding-top: 50px;
+  margin-bottom: 50px;
+}
+.index .van-tabs--line .van-tabs__wrap {
+  position: fixed;
+  top: 46px;
+  left: 0;
+  z-index: 2;
+  right: 0.7rem;
+  /*让出右侧按钮的空间*/
+}
+.index .van-tabs--line {
+  padding-top: 50px;
+}

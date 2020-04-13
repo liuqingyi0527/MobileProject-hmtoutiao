@@ -6,6 +6,7 @@ const Home = () => import('@/views/home')
 const Question = () => import('@/views/question')
 const Video = () => import('@/views/video')
 const User = () => import('@/views/user')
+// 全局注册路由
 Vue.use(VueRouter)
 
 const routes = [

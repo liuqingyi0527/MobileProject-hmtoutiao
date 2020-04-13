@@ -1,0 +1,134 @@
+<template>
+  <div class="container">
+    <van-pull-refresh v-model="isLoadingNew" @refresh="onRefresh">
+    文章列表{{channel.id}}--{{channel.name}}
+    <!--van-list:自带有下拉加载更多的效果-->
+    <!-- List 组件通过loading和finished两个变量控制加载状态
+     当组件滚动到底部时，会触发 @load事件 并将loading设置成true
+     此时可以发起异步操作并更新数据，数据更新完毕后，将loading设置成false即可。
+     若数据已全部加载完毕，则直接将finished设置成true即可
+    -->
+    <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+      <van-cell v-for="(item,index) in list" :key="index" :title="item.title">
+        <!-- 不用插槽内容在最右侧 -->
+        <div slot="label">
+          <!-- 图片 -->
+          <van-grid :column-num="item.cover.images.length">
+            <van-grid-item v-for="(img,idx) in item.cover.images" :key="idx">
+             <!-- 设置lazy-load属性来开启图片懒加载，需要搭配 Lazyload 组件使用 -->
+              <van-image lazy-load :src="img" />
+            </van-grid-item>
+          </van-grid>
+          <!-- 文字说明 -->
+          <div class="meta">
+           <span>{{item.aut_name}}</span>
+        <span>{{item.comm_count}}评论</span>
+        <span>{{item.pubdate | relativeTime}}</span>
+       <!--登陆用户可以看见 X
+            依据：只有登陆用户才有vuex 中 user
+        -->
+        <span class=close  v-if="$store.state.user" @click="hMoreAction(item.art_id)">
+          <van-icon name="cross"></van-icon>
+        </span>
+          </div>
+        </div>
+      </van-cell>
+    </van-list>
+     </van-pull-refresh>
+  </div>
+</template>
+
+<script>
+import { getArticles } from '@/api/article'
+
+export default {
+  name: 'ArticleList',
+  props: {
+    // 从父组件中获取当前的频道信息
+    channel: {
+      type: Object,
+      required: true
+    }
+  },
+  data () {
+    return {
+      list: [], // 列表数据
+      isLoadingNew: false, // 是否正在下拉刷新
+      loading: false,
+      finished: false,
+      timestamp: null // 保存本次请求数据要用到的时间戳
+    }
+  },
+  methods: {
+    // 子传值给父组件
+    // 在文章列表上 点击某个文章的 X
+    // 就是要去修改index.uve中showMoreAction设为true
+    hMoreAction (bigintObj) {
+      // 通过自定义事件(showMoreAction)，告诉父组件去弹窗
+      this.$emit('showMoreAction', bigintObj.toString())
+    },
+    // 下拉加载的具体代码
+    async onRefresh () {
+      // 发送请求，取回最新文章
+      console.log('上拉刷新加载新数据.....')
+      const result = await getArticles({
+        channel_id: this.channel.id, // 当前的频道ID
+        timestamp: Date.now(), // 请求最新的推荐数据传当前的时间戳
+        with_top: 1
+      })
+      // 2. 添加到list中,是加在list数组的头部还是尾部？
+      // 确定是要放在头部
+      const arr = result.data.data.results
+      this.list.unshift(...arr)
+      const msg = arr.length ? `刷新成功${arr.length}` : '没有最新数据'
+      this.$toast(msg)
+
+      // 3.修改下拉刷新的状态
+      this.isLoadingNew = false
+    },
+    // onLoad:执行时机：
+    // 1. 页面打开，van-list内容不足一屏，则会自动调用
+    // 2. 手动上拉，也会执行
+    async onLoad () {
+      console.log('加载新数据.....')
+      const {
+        data: { data }
+      } = await getArticles({
+        channel_id: this.channel.id, // 当前的频道ID
+        timestamp: this.timestamp || Date.now(),
+        // 请求新的推荐数据传当前的时间戳，请求历史推荐传指定的时间戳
+        with_top: 1
+      })
+      // 1.1 把取回来的数组arr中的数据放入 this.list中。
+      //  相当于是要把数组arr中的内容 填充到数组this.list.(还是原来的数组)
+      const arr = data.results
+      console.log(arr)
+      this.list.push(...arr)
+      // 1.2 更新一下，下一次请求时发的时间戳
+      this.timestamp = data.pre_timestamp
+      // 加载状态结束
+      this.loading = false
+      // 数据全部加载完成
+      if (arr.length === 0) {
+        this.finished = true
+      }
+      // 测试 finished-text的出现
+      // if (arr.length >= 10) {
+      //   this.finished = true
+      // }
+    }
+  }
+}
+</script>
+<style scoped lang='less'>
+.meta {
+  display: flex;
+  span {
+    margin-right: 10px;
+  }
+  .close{
+    // 让它在最右面
+    margin-left: auto;
+  }
+}
+</style>
