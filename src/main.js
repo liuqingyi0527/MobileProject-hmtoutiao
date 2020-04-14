@@ -10,6 +10,9 @@ import '@/styles/index.less'
 // 导入过滤器处理函数
 import { relativeTime } from '@/utils/date-time'
 Vue.use(Vant)
+// 挂载事件总线
+// 所有组件都可以访问$eventBus
+Vue.prototype.$eventBus = new Vue()
 // 使用懒加载
 Vue.use(Lazyload)
 Vue.config.productionTip = false

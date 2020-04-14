@@ -59,25 +59,38 @@ export default {
       timestamp: null // 保存本次请求数据要用到的时间戳
     }
   },
+  created () {
+    this.$eventBus.$on('delArticle', (obj) => {
+      console.log('参数是', obj)// obj是对象不能用+ 号打印了
+      // console.log('参数是' + JSON.stringify(obj))
+      console.log(`收到了delArticle事件，当前是${this.channel.id}频道`)
+      if (obj.channel_id === this.channel_id) {
+        const idx = this.list.findIndex(it => it.art_id.toString() === obj.articleId)
+        if (idx !== -1) {
+          // 找到了
+          this.list.splice(idx, 1)
+        }
+      }
+    })
+  },
   methods: {
-    // 子传值给父组件
-    // 在文章列表上 点击某个文章的 X
-    // 就是要去修改index.uve中showMoreAction设为true
+    // 3、子传值给父组件 在文章列表上 点击某个文章的 X ，bigintObj为文章编号
     hMoreAction (bigintObj) {
+      // console.log(typeof bigintObj)// object
+      // console.log(typeof bigintObj.toString())// string
       // 通过自定义事件(showMoreAction)，告诉父组件去弹窗
       this.$emit('showMoreAction', bigintObj.toString())
     },
-    // 下拉加载的具体代码
+    // 1、下拉加载的具体代码
     async onRefresh () {
-      // 发送请求，取回最新文章
-      console.log('上拉刷新加载新数据.....')
+      // 1、发送请求，取回最新文章
+      // console.log('上拉刷新加载新数据.....')
       const result = await getArticles({
         channel_id: this.channel.id, // 当前的频道ID
         timestamp: Date.now(), // 请求最新的推荐数据传当前的时间戳
         with_top: 1
       })
-      // 2. 添加到list中,是加在list数组的头部还是尾部？
-      // 确定是要放在头部
+      // 2. 添加到list中，确定是要放在头部
       const arr = result.data.data.results
       this.list.unshift(...arr)
       const msg = arr.length ? `刷新成功${arr.length}` : '没有最新数据'
@@ -86,9 +99,9 @@ export default {
       // 3.修改下拉刷新的状态
       this.isLoadingNew = false
     },
-    // onLoad:执行时机：
-    // 1. 页面打开，van-list内容不足一屏，则会自动调用
-    // 2. 手动上拉，也会执行
+    // 2、onLoad:执行时机：
+    // （1）页面打开，van-list内容不足一屏，则会自动调用
+    // （2）手动上拉，也会执行
     async onLoad () {
       console.log('加载新数据.....')
       const {
@@ -102,7 +115,7 @@ export default {
       // 1.1 把取回来的数组arr中的数据放入 this.list中。
       //  相当于是要把数组arr中的内容 填充到数组this.list.(还是原来的数组)
       const arr = data.results
-      console.log(arr)
+      // console.log(arr)
       this.list.push(...arr)
       // 1.2 更新一下，下一次请求时发的时间戳
       this.timestamp = data.pre_timestamp

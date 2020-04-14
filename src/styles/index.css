@@ -14,7 +14,7 @@
   top: 46px;
   left: 0;
   z-index: 2;
-  right: 0.7rem;
+  right: 30px;
   /*让出右侧按钮的空间*/
 }
 .index .van-tabs--line {

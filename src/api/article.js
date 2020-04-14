@@ -28,3 +28,18 @@ export const dislikeArticle = (articleId) => {
     }
   })
 }
+/**
+ *
+ * @param {*} articleId
+ * @param {*} type
+ */
+export const reportArticle = (articleId, type) => {
+  return request({
+    url: '/app/v1_0/article/reports',
+    method: 'POST',
+    data: {
+      target: articleId,
+      type: type
+    }
+  })
+}

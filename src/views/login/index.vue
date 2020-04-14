@@ -84,7 +84,7 @@ export default {
         // 如果 login这个操作没有错误，则不会进入catch
         const { data: { data } } = await login(this.user)
         this.$toast.success('登陆成功')
-        // 1. 保存信息到vuex中user
+        // 1. 保存信息到vuex中user (并且在vuex里存到本地localStorage)
         // 方式一：this.$store.commit
         // this.$store.commit('setUser', result.data.data)
         // 方式二：mapMutations
