@@ -1,6 +1,6 @@
 <template>
 <div class="index">
-    <van-tabs swipeable  "v-model="activeIndex>
+    <van-tabs swipeable  v-model="activeIndex">
         <van-tab :key="item.id" v-for="item in channels" :title="item.name">
         <article-list
          @showMoreAction="hMoreAction"
@@ -29,6 +29,7 @@
       <channel-edit
       :activeIndex="activeIndex"
       :channels="channels"
+      @updateCurIndex="hUpdateCurIndex"
       @updateCurChannel="hUpdateCurChannel"
       @close="hCloseChannelEdit"
       >
@@ -66,6 +67,10 @@ export default {
     this.getChannelsMethod()
   },
   methods: {
+    // 8、更新当前的选中频道下标
+    hUpdateCurIndex (index) {
+      this.activeIndex = index
+    },
     // 7、关闭编辑频道弹层
     hCloseChannelEdit () {
       this.showChannelEdit = false

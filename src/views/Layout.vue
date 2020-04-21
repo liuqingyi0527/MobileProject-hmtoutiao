@@ -1,10 +1,13 @@
 <template>
 <!-- 固定定位 -->
   <div class='container'>
+    <!-- 切换到我的界面时候不要显示这个头 -->
     <van-nav-bar
-  title="黑马头条"
-  fixed
-  @click-right="hRearch"
+     v-show="$route.path!=='/user'"
+      title="黑马头条"
+      right-text="搜索"
+      fixed
+      @click-right="hRearch"
 />
 <!-- 跳转路由的位置 -->
     <router-view></router-view>
@@ -29,7 +32,8 @@ export default {
   },
   methods: {
     hRearch () {
-
+      // 跳入搜索页
+      this.$router.push('/search')
     }
   }
 }

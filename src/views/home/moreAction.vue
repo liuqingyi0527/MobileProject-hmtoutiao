@@ -5,6 +5,7 @@
       <van-cell is-link @click="isReport=true">反馈垃圾内容</van-cell>
       <van-cell>拉黑作者</van-cell>
     </van-cell-group>
+
     <van-cell-group v-else>
       <van-cell icon="arrow-left" @click="isReport=false">返回</van-cell>
      <!-- 便利constants里面的数组，取出value(数字12345) -->

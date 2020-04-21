@@ -9,7 +9,12 @@
      若数据已全部加载完毕，则直接将finished设置成true即可
     -->
     <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-      <van-cell v-for="(item,index) in list" :key="index" :title="item.title">
+     <!-- 用bigint处理过是一个对象，但是用+可以默认成字符串，就不用tostring -->
+      <van-cell
+      @click="$router.push('/article/'+item.art_id)"
+      v-for="(item,index) in list"
+      :key="index"
+      :title="item.title">
         <!-- 不用插槽内容在最右侧 -->
         <div slot="label">
           <!-- 图片 -->
@@ -27,7 +32,7 @@
        <!--登陆用户可以看见 X
             依据：只有登陆用户才有vuex 中 user
         -->
-        <span class=close  v-if="$store.state.user" @click="hMoreAction(item.art_id)">
+        <span class=close  v-if="$store.state.user" @click.stop="hMoreAction(item.art_id)">
           <van-icon name="cross"></van-icon>
         </span>
           </div>
@@ -60,6 +65,7 @@ export default {
     }
   },
   created () {
+    // 监听事件总线的删除文章 方法
     this.$eventBus.$on('delArticle', (obj) => {
       console.log('参数是', obj)// obj是对象不能用+ 号打印了
       // console.log('参数是' + JSON.stringify(obj))
