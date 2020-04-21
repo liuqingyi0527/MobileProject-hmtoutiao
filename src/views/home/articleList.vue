@@ -65,7 +65,8 @@ export default {
       isLoadingNew: false, // 是否正在下拉刷新
       loading: false,
       finished: false,
-      timestamp: null // 保存本次请求数据要用到的时间戳
+      timestamp: null, // 保存本次请求数据要用到的时间戳
+      timer: null
     }
   },
   created () {
@@ -99,7 +100,9 @@ export default {
     // 当scroll发生了，会自动传 event 事件对象
     remember (event) {
       // todo : 去完成节流操作
+      // if(){
 
+      // }
       // 取出当前滚动条的位置
       // 保存到一个普通的属性中。
       this.scrollTop = event.target.scrollTop
