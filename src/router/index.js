@@ -21,7 +21,7 @@ const routes = [
     path: '/',
     component: Layout,
     children: [
-      { path: '/', name: 'home', component: Home },
+      { path: '/', name: 'home', component: Home, meta: { isKeepAlive: true } },
       { path: '/question', name: 'question', component: Question },
       { path: '/video', name: 'video', component: Video },
       { path: '/user', name: 'user', component: User }
@@ -35,7 +35,8 @@ const routes = [
   {
     path: '/search/result',
     name: 'searchResult',
-    component: () => import('../views/search/result.vue')
+    component: () => import('../views/search/result.vue'),
+    meta: { isKeepAlive: true }
   },
   { // 定义路由时，写的是:id
     // 则在路由接收参数时，也要写params.id
@@ -45,7 +46,8 @@ const routes = [
   }, {
     path: '/user/profile',
     name: 'userProfile',
-    component: () => import('@/views/user/profile.vue')
+    component: () => import('@/views/user/profile.vue'),
+    meta: { isKeepAlive: true }
   },
   {
     // 小智同学聊天机器人

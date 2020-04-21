@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="scroll-wrapper" @scroll="remember" ref="myScroll">
     <van-pull-refresh v-model="isLoadingNew" @refresh="onRefresh">
     文章列表{{channel.id}}--{{channel.name}}
     <!--van-list:自带有下拉加载更多的效果-->
@@ -8,13 +8,17 @@
      此时可以发起异步操作并更新数据，数据更新完毕后，将loading设置成false即可。
      若数据已全部加载完毕，则直接将finished设置成true即可
     -->
-    <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+    <van-list v-model="loading"
+    :finished="finished"
+    finished-text="没有更多了"
+    @load="onLoad">
      <!-- 用bigint处理过是一个对象，但是用+可以默认成字符串，就不用tostring -->
       <van-cell
-      @click="$router.push('/article/'+item.art_id)"
       v-for="(item,index) in list"
       :key="index"
-      :title="item.title">
+      :title="item.title"
+      @click="$router.push('/article/'+item.art_id)"
+      >
         <!-- 不用插槽内容在最右侧 -->
         <div slot="label">
           <!-- 图片 -->
@@ -79,7 +83,28 @@ export default {
       }
     })
   },
+  activated () {
+    // 组件激活时的钩子函数
+    console.log('activated')
+    // 去设置一下滚动条的位置
+    if (this.scrollTop && this.$refs.myScroll) {
+      // 恢复
+      this.$refs.myScroll.scrollTop = this.scrollTop
+    }
+  },
+  deactivated () {
+    console.log('deactivated')
+  },
   methods: {
+    // 当scroll发生了，会自动传 event 事件对象
+    remember (event) {
+      // todo : 去完成节流操作
+
+      // 取出当前滚动条的位置
+      // 保存到一个普通的属性中。
+      this.scrollTop = event.target.scrollTop
+      // console.log(this.scrollTop)
+    },
     // 3、子传值给父组件 在文章列表上 点击某个文章的 X ，bigintObj为文章编号
     hMoreAction (bigintObj) {
       // console.log(typeof bigintObj)// object
@@ -123,6 +148,7 @@ export default {
       const arr = data.results
       // console.log(arr)
       this.list.push(...arr)
+      console.log(arr)
       // 1.2 更新一下，下一次请求时发的时间戳
       this.timestamp = data.pre_timestamp
       // 加载状态结束

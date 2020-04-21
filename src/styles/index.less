@@ -2,6 +2,21 @@
   font-size: 25px;
 }
 // 全局样式 在main.js中引入即可
+// vant-ui有自已的样式
+// 如果这个项目需要去覆盖vant-ui的样式，统一写在这里
+#app{
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+.container{
+  width: 100%;
+  height: 100%
+}
+
 .van-nav-bar{
         background-color: #3196fa;
        .van-nav-bar__title{
@@ -19,8 +34,21 @@
 /*首页*/
 .index{
     // layout中的头部设置fixed,不让黑马头条标题遮挡
+    height: 100%;
     padding-top:50px;
     margin-bottom: 50px;
+    .van-tabs {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      .van-tabs__content {
+          flex:1;
+          overflow: hidden;
+      }
+  }
+  .van-tab__pane{
+      height: 100%;
+  }
     .van-tabs--line .van-tabs__wrap {
       position: fixed;
       top: 46px;
@@ -31,4 +59,9 @@
     .van-tabs--line{
       padding-top: 50px; // 让出van-tabs的高度
     }
-}
+     // .scroll-wrapper是ArticleList.vue组件的根元素的类名
+   .scroll-wrapper{
+     overflow: auto;//自动产生滚动条
+     height: 100%;
+   }
+    }
